@@ -1,0 +1,20 @@
+
+  Part	StartSector	    NumSectors	UUID	    	Type
+  1	    32768     	    1048576   	252859d2-01	0c Boot
+  2	    1081344   	    498663424 	252859d2-02	83
+
+
+CLK: (sync kernel. arm: enter 600000 KHz, init 600000 KHz, kernel 600000 KHz)
+  apll 600000 KHz
+  dpll 664000 KHz
+  cpll 612000 KHz
+  npll 1188000 KHz
+  gpll 1200000 KHz
+  aclk_bus 200000 KHz
+  hclk_bus 150000 KHz
+  pclk_bus 100000 KHz
+  aclk_peri 200000 KHz
+  hclk_peri 150000 KHz
+  pclk_pmu 100000 KHz
+
+https://www.cnblogs.com/lialong1st/p/8477847.html
