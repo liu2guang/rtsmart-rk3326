@@ -1,0 +1,17 @@
+menu "Hardware Drivers Config"
+    menu "RK3326/PX30 Peripheral Drivers"
+        menuconfig BSP_USING_UART
+            bool "Enable UART"
+            select RT_USING_SERIAL
+            default y
+
+            if BSP_USING_UART
+                config BSP_USING_UART2
+                bool "Enable UART2"
+                default y
+            endif
+    endmenu
+
+    menu "OGA2 Board Peripheral Drivers"
+    endmenu
+endmenu

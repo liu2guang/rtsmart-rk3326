@@ -1,0 +1,22 @@
+[
+ {
+  "path": "/packages/tools/CoreMark", 
+  "ver": "latest", 
+  "name": "COREMARK"
+ }, 
+ {
+  "path": "/packages/tools/MemoryPerf", 
+  "ver": "latest", 
+  "name": "MEMORYPERF"
+ }, 
+ {
+  "path": "/packages/system/LittlevGL2RTT", 
+  "ver": "v0.0.1", 
+  "name": "LITTLEVGL2RTT"
+ }, 
+ {
+  "path": "/packages/misc/zlib", 
+  "ver": "latest", 
+  "name": "ZLIB"
+ }
+]

@@ -1,0 +1,9 @@
+/build
+/.vscode
+/rtthread.S
+/rtthread.bin
+/rtthread.elf
+/rtthread.map
+/.config.old
+/.sconsign.dblite
+/cconfig.h
