@@ -217,6 +217,6 @@
 #define BSP_USING_UART2
 
 /* OGA2 Board Peripheral Drivers */
-
+#define RT_PRINTF_LONGLONG 
 
 #endif

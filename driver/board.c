@@ -57,16 +57,16 @@ void idle_wfi(void)
     asm volatile ("wfi");
 }
 
-#define PMU_CRU_BASE 0xFF2BC000
-#define CRU_GLB_SRST_FST_BASE PMU_CRU_BASE + 0x00b8
-#define CRU_GLB_SRST_SND_BASE PMU_CRU_BASE + 0x00bc
+#define CRU_BASE 0xFF2B0000
+#define CRU_GLB_SRST_FST_BASE CRU_BASE + 0x00b8
+#define CRU_GLB_SRST_SND_BASE CRU_BASE + 0x00bc
 
 void rk3326_reboot(void)
 {
     WRITE_UINT32(0xfdb9, CRU_GLB_SRST_FST_BASE); 
     WRITE_UINT32(0xeca8, CRU_GLB_SRST_SND_BASE); 
 }
-MSH_CMD_EXPORT_ALIAS(rk3326_reboot, reboot, reboot RT-Thread.);  
+MSH_CMD_EXPORT_ALIAS(rk3326_reboot, reboot, reboot RT-Thread.); 
 
 /**
  *  Initialize the Hardware related stuffs. Called from rtthread_startup()

@@ -20,9 +20,14 @@ SECTIONS
     {
         KEEP(*(.text.entrypoint))       /* The entry point */
         *(.vectors)
+
+        . = ALIGN(8);
+        __text_start = .;
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */
-
+        __text_end = .;
+        
+        . = ALIGN(8);
         *(.rodata)                      /* read-only data (constants) */
         *(.rodata*)
         *(.glue_7)

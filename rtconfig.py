@@ -16,8 +16,8 @@ if os.getenv('RTT_CC'):
 PLATFORM    = 'gcc'
 EXEC_PATH   = r'D:\software\env_released_1.2.0\env\tools\gnu_gcc\arm_gcc\gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf\bin'  
 
-BUILD = 'debug'
-# BUILD = 'release'
+# BUILD = 'debug'
+BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
