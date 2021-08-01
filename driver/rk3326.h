@@ -10,5 +10,6 @@
 #include "rk3326_gic.h"     /* 通用中断控制器 */ 
 #include "rk3326_cru.h"     /* 时钟 */ 
 #include "rk3326_uart.h"    /* 串口 */
+#include "rk3326_dwmci.h"   /* DesignWare SD/eMMC Host Controller IP */
 
 #endif /* __RK3326_H__ */ 

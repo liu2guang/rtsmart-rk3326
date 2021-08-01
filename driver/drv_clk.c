@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #define DBG_TAG "drv.clk"
-#define BSP_ENBALE_CLK_DEBUG 1
+#define BSP_ENBALE_CLK_DEBUG 0
 
 #define DBG_ENABLE
 #if (BSP_ENBALE_CLK_DEBUG == 1)
@@ -101,6 +101,7 @@ rt_uint32_t rk3326_pll_get_rate(rk3326_pll_type_t pll_type)
     rt_uint8_t postdiv1, postdiv2;
     rt_uint32_t frac;
     rt_uint8_t dsmpd; 
+    rt_uint8_t bypass; 
 
     RT_ASSERT(pll_type < RK3326_PLL_MAXNUM); 
 
@@ -112,6 +113,7 @@ rt_uint32_t rk3326_pll_get_rate(rk3326_pll_type_t pll_type)
     con[3] = readl(base + CRU_PLL_CON3); 
     con[4] = readl(base + CRU_PLL_CON4); 
 
+    bypass = (con[0] & CRU_PLL_BP_MASK) >> CRU_PLL_BP_SHIFT; 
     dsmpd = (con[1] & CRU_PLL_DSMPD_MASK) >> CRU_PLL_DSMPD_SHIFT; 
     refdiv = (con[1] & CRU_PLL_REFDIV_MASK) >> CRU_PLL_REFDIV_SHIFT; 
     fbdiv = (con[0] & CRU_PLL_FBDIV_MASK) >> CRU_PLL_FBDIV_SHIFT; 
@@ -119,13 +121,16 @@ rt_uint32_t rk3326_pll_get_rate(rk3326_pll_type_t pll_type)
     postdiv2 = (con[1] & CRU_PLL_POSTDIV2_MASK) >> CRU_PLL_POSTDIV2_SHIFT; 
     frac = (con[2] & CRU_PLL_FRAC_MASK) >> CRU_PLL_FRAC_SHIFT;
 
-    if(dsmpd)
+    if(bypass)
     {
-        output_hz = (RK3326_XIN_OSC0/refdiv*fbdiv)/(postdiv1*postdiv2); 
+        output_hz = RK3326_XIN_OSC0; 
     }
     else
     {
-        output_hz = (RK3326_XIN_OSC0/refdiv*(fbdiv+frac/0x1000000))/(postdiv1*postdiv2); 
+        if(dsmpd)
+            output_hz = (RK3326_XIN_OSC0/refdiv*fbdiv)/(postdiv1*postdiv2); 
+        else
+            output_hz = (RK3326_XIN_OSC0/refdiv*(fbdiv+frac/0x1000000))/(postdiv1*postdiv2); 
     }
 
     return output_hz; 
@@ -300,9 +305,9 @@ rt_uint32_t rk3326_clk_get_rate_clk_uart(rt_uint8_t index)
     clksel_con38 = readl(CRU_CLKSEL_CON38_BASE); 
     clksel_con39 = readl(CRU_CLKSEL_CON39_BASE); 
 
-    LOG_I("clksel_con37 = 0x%.8x", clksel_con37); 
-    LOG_I("clksel_con38 = 0x%.8x", clksel_con38); 
-    LOG_I("clksel_con39 = 0x%.8x", clksel_con39); 
+    LOG_D("clksel_con37 = 0x%.8x", clksel_con37); 
+    LOG_D("clksel_con38 = 0x%.8x", clksel_con38); 
+    LOG_D("clksel_con39 = 0x%.8x", clksel_con39); 
 
     clk_uart2_frac_div_con_l16 = (clksel_con39 & CRU_UART2_FRAC_L_CON_MASK) >> CRU_UART2_FRAC_L_CON_SHIFT; 
     clk_uart2_frac_div_con_h16 = (clksel_con39 & CRU_UART2_FRAC_H_CON_MASK) >> CRU_UART2_FRAC_H_CON_SHIFT;
@@ -311,28 +316,28 @@ rt_uint32_t rk3326_clk_get_rate_clk_uart(rt_uint8_t index)
     clk_uart2_div_con = (clksel_con37 & CRU_UART2_DIV_CON_MASK) >> CRU_UART2_DIV_CON_SHIFT; 
     clk_uart2_pll_sel = (clksel_con37 & CRU_UART2_PLL_SEL_MASK) >> CRU_UART2_PLL_SEL_SHIFT; 
 
-    LOG_I("clk_uart2_frac_div_con_l16 = %d", clk_uart2_frac_div_con_l16); 
-    LOG_I("clk_uart2_frac_div_con_h16 = %d", clk_uart2_frac_div_con_h16); 
-    LOG_I("clk_uart2_divnp5_div_con = %d", clk_uart2_divnp5_div_con); 
-    LOG_I("clk_uart2_sel = %d", clk_uart2_sel); 
-    LOG_I("clk_uart2_div_con = %d", clk_uart2_div_con); 
-    LOG_I("clk_uart2_pll_sel = %d", clk_uart2_pll_sel); 
+    LOG_D("clk_uart2_frac_div_con_l16 = %d", clk_uart2_frac_div_con_l16); 
+    LOG_D("clk_uart2_frac_div_con_h16 = %d", clk_uart2_frac_div_con_h16); 
+    LOG_D("clk_uart2_divnp5_div_con = %d", clk_uart2_divnp5_div_con); 
+    LOG_D("clk_uart2_sel = %d", clk_uart2_sel); 
+    LOG_D("clk_uart2_div_con = %d", clk_uart2_div_con); 
+    LOG_D("clk_uart2_pll_sel = %d", clk_uart2_pll_sel); 
 
     switch (clk_uart2_pll_sel)
     {
     case CRU_UART2_PLL_SEL_GPLL:
-        LOG_I("CRU_UART2_PLL_SEL_GPLL"); 
+        LOG_D("CRU_UART2_PLL_SEL_GPLL"); 
         clk_source = rk3326_pll_get_rate(RK3326_PLL_APLL); 
         break;
     case CRU_UART2_PLL_SEL_24M:
-        LOG_I("CRU_UART2_PLL_SEL_24M"); 
+        LOG_D("CRU_UART2_PLL_SEL_24M"); 
         clk_source = RK3326_XIN_OSC0; 
         break;
     case CRU_UART2_PLL_SEL_480M: 
-        LOG_I("CRU_UART2_PLL_SEL_480M"); 
+        LOG_D("CRU_UART2_PLL_SEL_480M"); 
         break;
     case CRU_UART2_PLL_SEL_NPLL:
-        LOG_I("CRU_UART2_PLL_SEL_NPLL"); 
+        LOG_D("CRU_UART2_PLL_SEL_NPLL"); 
         clk_source = rk3326_pll_get_rate(RK3326_PLL_NPLL); 
         break;
     }
@@ -341,27 +346,94 @@ rt_uint32_t rk3326_clk_get_rate_clk_uart(rt_uint8_t index)
     clk_uart2_np5 = 2 * clk_uart2 / (2 * clk_uart2_divnp5_div_con + 3); 
     clk_uart2_frac_out = clk_uart2 / (clk_uart2_frac_div_con_h16 / clk_uart2_frac_div_con_l16); 
 
-    LOG_I("clk_uart2 = %d", clk_uart2); 
-    LOG_I("clk_uart2_np5 = %d", clk_uart2_np5); 
-    LOG_I("clk_uart2_frac_out = %d", clk_uart2_frac_out); 
+    LOG_D("clk_uart2 = %d", clk_uart2); 
+    LOG_D("clk_uart2_np5 = %d", clk_uart2_np5); 
+    LOG_D("clk_uart2_frac_out = %d", clk_uart2_frac_out); 
 
     switch (clk_uart2_sel)
     {
     case CRU_UART2_CLK_SEL_UART2:
-        LOG_I("CRU_UART2_CLK_SEL_UART2"); 
+        LOG_D("CRU_UART2_CLK_SEL_UART2"); 
         clk_uart2 = clk_uart2; 
         break;
     case CRU_UART2_CLK_SEL_UART2_NP5:
-        LOG_I("CRU_UART2_CLK_SEL_UART2_NP5"); 
+        LOG_D("CRU_UART2_CLK_SEL_UART2_NP5"); 
         clk_uart2 = clk_uart2_np5; 
         break;
     case CRU_UART2_CLK_SEL_UART2_FRAC: 
-        LOG_I("CRU_UART2_CLK_SEL_UART2_FRAC"); 
+        LOG_D("CRU_UART2_CLK_SEL_UART2_FRAC"); 
         clk_uart2 = clk_uart2_frac_out; 
         break;
     }
 
     return clk_uart2; 
+}
+
+rt_uint32_t rk3326_clk_get_rate_sdmmc(void)
+{
+    rt_uint32_t clk_source = 0, clk_sdmmc = 0; 
+    rt_uint32_t clksel_con16 = 0; 
+    rt_uint32_t clksel_con17 = 0;  
+
+    rt_uint8_t clk_sdmmc_pll_sel = 0; 
+    rt_uint8_t clk_sdmmc_div_con = 0; 
+    rt_uint8_t clk_sdmmc_sel = 0; 
+    rt_uint8_t clk_sdmmc_div50_div_con = 0; 
+
+    rt_uint32_t clk_sdmmc_div50 = 0; 
+
+    clksel_con16 = readl(CRU_CLKSEL_CON37_BASE); 
+    clksel_con17 = readl(CRU_CLKSEL_CON38_BASE); 
+
+    LOG_D("clksel_con16 = 0x%.8x", clksel_con16); 
+    LOG_D("clksel_con17 = 0x%.8x", clksel_con17); 
+
+    clk_sdmmc_pll_sel = (clksel_con16 & CRU_SDMMC_CLK_PLL_SEL_MASK) >> CRU_SDMMC_CLK_PLL_SEL_SHIFT; 
+    clk_sdmmc_div_con = (clksel_con16 & CRU_SDMMC_DIV_CON_MASK) >> CRU_SDMMC_DIV_CON_SHIFT; 
+    clk_sdmmc_sel = (clksel_con17 & CRU_SDMMC_CLK_SEL_MASK) >> CRU_SDMMC_CLK_SEL_SHIFT; 
+    clk_sdmmc_div50_div_con = (clksel_con17 & CRU_SDMMC_DIV50_CON_MASK) >> CRU_SDMMC_DIV50_CON_SHIFT; 
+
+    LOG_D("clk_sdmmc_pll_sel = %d", clk_sdmmc_pll_sel); 
+    LOG_D("clk_sdmmc_div_con = %d", clk_sdmmc_div_con); 
+    LOG_D("clk_sdmmc_sel = %d", clk_sdmmc_sel); 
+    LOG_D("clk_sdmmc_div50_div_con = %d", clk_sdmmc_div50_div_con); 
+
+    switch (clk_sdmmc_pll_sel)
+    {
+    case CRU_SDMMC_PLL_SEL_GPLL:
+        LOG_D("CRU_SDMMC_PLL_SEL_GPLL"); 
+        clk_source = rk3326_pll_get_rate(RK3326_PLL_GPLL); 
+        break;
+    case CRU_SDMMC_PLL_SEL_CPLL:
+        LOG_D("CRU_SDMMC_PLL_SEL_CPLL"); 
+        clk_source = rk3326_pll_get_rate(RK3326_PLL_CPLL); 
+        break;
+    case CRU_SDMMC_PLL_SEL_NPLL: 
+        LOG_D("CRU_SDMMC_PLL_SEL_NPLL"); 
+        clk_source = rk3326_pll_get_rate(RK3326_PLL_NPLL); 
+        break;
+    case CRU_SDMMC_PLL_SEL_XIN24M:
+        LOG_D("CRU_SDMMC_PLL_SEL_XIN24M"); 
+        clk_source = RK3326_XIN_OSC0; 
+        break;
+    }
+
+    clk_sdmmc = clk_source / (clk_sdmmc_div_con + 1); 
+    clk_sdmmc_div50 = clk_sdmmc / (clk_sdmmc_div50_div_con + 1); 
+
+    switch (clk_sdmmc_sel)
+    {
+    case CRU_SDMMC_CLK_SEL_SDMMC:
+        LOG_D("CRU_SDMMC_CLK_SEL_SDMMC"); 
+        clk_sdmmc = clk_sdmmc; 
+        break;
+    case CRU_SDMMC_CLK_SEL_SDMMC_DIV50:
+        LOG_D("CRU_SDMMC_CLK_SEL_SDMMC_DIV50"); 
+        clk_sdmmc = clk_sdmmc_div50; 
+        break;
+    }
+
+    return clk_sdmmc; 
 }
 
 int rk3326_clk_test(void)

@@ -17,14 +17,15 @@ DEPENDS = []
 #---------------------------------------------------------------------------------
 # Compile the configuration 
 #---------------------------------------------------------------------------------
-SOURCES          = Glob("*.c") 
+SOURCES          = Glob("*.c") + Glob("common/*.c") 
 
 LOCAL_CPPPATH    = [] 
 LOCAL_CCFLAGS    = "" 
 LOCAL_ASFLAGS    = ""
 
 CPPPATH          = [os.path.join(GetCurrentDir(), '.'),
-                    os.path.join(GetCurrentDir(), 'rockchip')] 
+                    os.path.join(GetCurrentDir(), 'rockchip'),
+                    os.path.join(GetCurrentDir(), 'common')] 
 
 CCFLAGS          = "" 
 ASFLAGS          = ""

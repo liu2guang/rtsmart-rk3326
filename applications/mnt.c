@@ -13,6 +13,12 @@
 
 int mnt_init(void)
 {
+    rt_thread_mdelay(200);
+    if (dfs_mount("sd0", "/", "elm", 0, 0) != 0)
+    {
+        rt_kprintf("file system initialization fail!\n");
+    }
+
     return 0;
 }
-INIT_ENV_EXPORT(mnt_init);
+INIT_APP_EXPORT(mnt_init);
