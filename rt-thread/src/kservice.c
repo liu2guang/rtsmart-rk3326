@@ -1364,7 +1364,7 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
  * @param func the function name when assertion.
  * @param line the file line number when assertion.
  */
-void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
+void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line) 
 {
     volatile char dummy = 0;
 

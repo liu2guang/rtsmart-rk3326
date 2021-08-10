@@ -16,8 +16,8 @@ if os.getenv('RTT_CC'):
 PLATFORM    = 'gcc'
 EXEC_PATH   = r'D:\software\env_released_1.2.0\env\tools\gnu_gcc\arm_gcc\gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf\bin'  
 
-BUILD = 'debug'
-# BUILD = 'release'
+# BUILD = 'debug'
+BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -32,7 +32,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=armv8-a -mtune=cortex-a35 -Wno-int-to-pointer-cast '
+    DEVICE = ' -march=armv8-a -mtune=cortex-a35 -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast'
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
