@@ -10,6 +10,11 @@ menu "Hardware Drivers Config"
                 bool "Enable UART2"
                 default y
             endif
+
+        config BSP_USING_DWMMC
+            bool "Enable DWMMC"
+            select RT_USING_SDIO
+            default y
     endmenu
 
     menu "OGA2 Board Peripheral Drivers"

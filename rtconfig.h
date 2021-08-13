@@ -235,6 +235,7 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART2
+#define BSP_USING_DWMMC
 
 /* OGA2 Board Peripheral Drivers */
 

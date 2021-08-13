@@ -11,6 +11,8 @@
 #include "memalign.h"
 #include "stdbool.h"
 
+#if defined(BSP_USING_DWMMC)
+
 #define DBG_TAG "drv.dwmci"
 #define BSP_ENBALE_DWMCI_DEBUG 1
 
@@ -898,8 +900,8 @@ int rt_hw_sdio_init(void)
     host->freq_min = 400 * 1000;
     host->freq_max = 25 * 1000 * 1000;
     host->valid_ocr =  VDD_32_33 | VDD_33_34; 
-    // host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
-    host->flags = MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
+    host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
+    // host->flags = MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
     host->max_seg_size = 2048;
     host->max_dma_segs = 3;
     host->max_blk_size = 512;
@@ -956,3 +958,5 @@ int dwmci_dump(void)
     return RT_EOK; 
 }
 MSH_CMD_EXPORT_ALIAS(dwmci_dump, dwmci_dump, dwmci_dump); 
+
+#endif /* BSP_USING_DWMMC */ 
